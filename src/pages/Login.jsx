@@ -38,7 +38,7 @@ export const Login = () => {
               <img
                 src="/Logo.jpg"
                 alt="Technokrate Hire"
-                className="h-12 sm:h-14 w-auto object-contain"
+                className="h-16 sm:h-20 w-auto object-contain drop-shadow-xs"
               />
             </div>
 

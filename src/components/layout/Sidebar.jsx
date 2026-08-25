@@ -47,19 +47,19 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, toggleCollapse }) => {
         } ${isCollapsed ? "w-20" : "w-64"}`}
       >
         {/* Brand Header with Logo.jpg */}
-        <div className="flex items-center justify-between h-20 px-4 border-b border-slate-100 bg-white">
+        <div className="flex items-center justify-between h-20 px-3.5 border-b border-slate-100 bg-white">
           <div className="flex items-center gap-3 overflow-hidden">
             {isCollapsed ? (
               <img
                 src="/image.png"
                 alt="Technokrate Hire"
-                className="w-10 h-10 object-contain mx-auto"
+                className="w-11 h-11 object-contain mx-auto"
               />
             ) : (
               <img
                 src="/Logo.jpg"
                 alt="Technokrate Hire"
-                className="h-10 w-auto object-contain"
+                className="h-12 w-auto max-w-[185px] object-contain"
               />
             )}
           </div>
