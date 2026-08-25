@@ -67,7 +67,7 @@ export const Header = ({ onOpenSidebar }) => {
     if (path === "/profile") {
       return { title: "Profile", subtitle: "Manage your profile and account settings" };
     }
-    return { title: "Sales Team Portal", subtitle: "Welcome back" };
+    return { title: "Technokrate Hire", subtitle: "Executive Workspace" };
   };
 
   const pageInfo = getPageInfo();

@@ -42,28 +42,32 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, toggleCollapse }) => {
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen bg-[#0b132b] text-slate-300 flex flex-col transition-all duration-300 ease-in-out border-r border-slate-800/60 shadow-xl ${
+        className={`fixed top-0 left-0 z-50 h-screen bg-white text-slate-700 flex flex-col transition-all duration-300 ease-in-out border-r border-slate-200/90 shadow-sm ${
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         } ${isCollapsed ? "w-20" : "w-64"}`}
       >
-        {/* Brand Header matching Reference Image */}
-        <div className="flex items-center justify-between h-16 px-5 border-b border-slate-800/80 bg-[#090f23]">
+        {/* Brand Header with Logo.jpg */}
+        <div className="flex items-center justify-between h-20 px-4 border-b border-slate-100 bg-white">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600 text-white font-bold shadow-md shadow-blue-500/20 shrink-0">
-              <Users className="w-5 h-5" />
-            </div>
-            {!isCollapsed && (
-              <div className="flex flex-col truncate">
-                <span className="font-bold text-white text-base tracking-tight truncate">Sales Team Portal</span>
-                <span className="text-[10px] uppercase font-semibold text-blue-400 tracking-wider">Executive Workspace</span>
-              </div>
+            {isCollapsed ? (
+              <img
+                src="/image.png"
+                alt="Technokrate Hire"
+                className="w-10 h-10 object-contain mx-auto"
+              />
+            ) : (
+              <img
+                src="/Logo.jpg"
+                alt="Technokrate Hire"
+                className="h-10 w-auto object-contain"
+              />
             )}
           </div>
 
           {/* Mobile Close Button */}
           <button
             onClick={onClose}
-            className="lg:hidden p-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800"
+            className="lg:hidden p-1 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100"
           >
             <X className="w-5 h-5" />
           </button>
@@ -81,8 +85,8 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, toggleCollapse }) => {
                 className={({ isActive }) =>
                   `flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all group ${
                     isActive
-                      ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30 font-semibold"
-                      : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/60"
+                      ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-semibold"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
                   }`
                 }
                 title={isCollapsed ? item.name : undefined}
@@ -95,10 +99,10 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, toggleCollapse }) => {
         </nav>
 
         {/* Collapse Toggle Button for Desktop */}
-        <div className="hidden lg:flex px-3 py-2 border-t border-slate-800/40">
+        <div className="hidden lg:flex px-3 py-2 border-t border-slate-100">
           <button
             onClick={toggleCollapse}
-            className="flex items-center justify-center w-full py-2 text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 rounded-xl transition-colors gap-2"
+            className="flex items-center justify-center w-full py-2 text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100/80 rounded-xl transition-colors gap-2"
           >
             {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
             {!isCollapsed && <span>Collapse Sidebar</span>}
@@ -106,10 +110,10 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, toggleCollapse }) => {
         </div>
 
         {/* Logout Button */}
-        <div className="p-3 border-t border-slate-800/80 bg-[#090f23]/60">
+        <div className="p-3 border-t border-slate-100 bg-slate-50/50">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3.5 w-full px-3.5 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer"
+            className="flex items-center gap-3.5 w-full px-3.5 py-3 rounded-xl text-sm font-medium text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-all cursor-pointer"
             title={isCollapsed ? "Logout" : undefined}
           >
             <LogOut className="w-5 h-5 shrink-0" />
