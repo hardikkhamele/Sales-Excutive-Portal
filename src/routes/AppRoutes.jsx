@@ -10,6 +10,8 @@ import { EditCompany } from "../pages/EditCompany";
 import { Activities } from "../pages/Activities";
 import { Reports } from "../pages/Reports";
 import { Profile } from "../pages/Profile";
+import { RevenueManagement } from "../pages/RevenueManagement";
+import { PaymentDetails } from "../pages/PaymentDetails";
 
 export const AppRoutes = () => {
   return (
@@ -24,6 +26,10 @@ export const AppRoutes = () => {
         <Route path="/companies/add" element={<AddCompany />} />
         <Route path="/companies/:id" element={<CompanyDetails />} />
         <Route path="/companies/:id/edit" element={<EditCompany />} />
+        <Route path="/revenue" element={<RevenueManagement />} />
+        <Route path="/revenue-management" element={<Navigate to="/revenue" replace />} />
+        <Route path="/revenue/:id" element={<PaymentDetails />} />
+        <Route path="/revenue-management/:id" element={<PaymentDetails />} />
         <Route path="/activities" element={<Activities />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/profile" element={<Profile />} />

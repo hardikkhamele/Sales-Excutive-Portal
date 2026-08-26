@@ -7,6 +7,7 @@ import {
   BarChart3,
   User,
   LogOut,
+  IndianRupee,
   X,
   ChevronLeft,
   ChevronRight
@@ -21,6 +22,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, toggleCollapse }) => {
   const navItems = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { name: "Companies", path: "/companies", icon: Building2 },
+    { name: "Revenue Management", path: "/revenue", icon: IndianRupee },
     { name: "My Activities", path: "/activities", icon: ListTodo },
     { name: "Reports", path: "/reports", icon: BarChart3 },
     { name: "Profile", path: "/profile", icon: User }

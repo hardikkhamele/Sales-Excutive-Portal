@@ -4,7 +4,7 @@ export const Badge = ({ status, type, className = "" }) => {
   const getBadgeStyle = () => {
     const val = (status || type || "").toLowerCase();
 
-    if (val === "completed") {
+    if (val === "completed" || val === "successful" || val === "paid" || val === "success") {
       return "bg-emerald-50 text-emerald-700 border-emerald-200";
     }
     if (val === "pending") {
@@ -31,7 +31,7 @@ export const Badge = ({ status, type, className = "" }) => {
     if (val === "email") {
       return "bg-cyan-50 text-cyan-700 border-cyan-200";
     }
-    if (val === "cancelled") {
+    if (val === "cancelled" || val === "failed" || val === "declined") {
       return "bg-rose-50 text-rose-700 border-rose-200";
     }
 

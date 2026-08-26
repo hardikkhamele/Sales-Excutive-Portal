@@ -15,7 +15,8 @@ import {
   Trash2,
   MessageSquareText,
   TrendingUp,
-  Sparkles
+  Sparkles,
+  ChevronDown
 } from "lucide-react";
 import { Modal } from "../common/Modal";
 import { Button } from "../common/Button";
@@ -24,7 +25,7 @@ import { useSales } from "../../context/SalesContext";
 export const CallHistoryTracker = () => {
   const { callLogs, addCallLog, deleteCallLog, companies } = useSales();
 
-  const [activeFilter, setActiveFilter] = useState("today"); // "today" | "week" | "month" | "all"
+  const [activeFilter, setActiveFilter] = useState("today"); // "today" | "yesterday" | "this_week" | "prev_week" | "this_month" | "all"
   const [searchQuery, setSearchQuery] = useState("");
   const [outcomeFilter, setOutcomeFilter] = useState("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,35 +56,65 @@ export const CallHistoryTracker = () => {
   // Helper date calculations
   const todayStr = new Date().toISOString().split("T")[0];
 
-  const getWeekStartDate = () => {
+  const yesterdayStr = useMemo(() => {
     const d = new Date();
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Monday start
-    const monday = new Date(d.setDate(diff));
-    return monday.toISOString().split("T")[0];
-  };
+    d.setDate(d.getDate() - 1);
+    return d.toISOString().split("T")[0];
+  }, []);
 
-  const getMonthStartDate = () => {
-    const d = new Date();
-    return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split("T")[0];
-  };
+  const weekRange = useMemo(() => {
+    const now = new Date();
+    const day = now.getDay();
+    const diffToMonday = now.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(now.getFullYear(), now.getMonth(), diffToMonday);
+    const sunday = new Date(now.getFullYear(), now.getMonth(), diffToMonday + 6);
+    return {
+      start: monday.toISOString().split("T")[0],
+      end: sunday.toISOString().split("T")[0]
+    };
+  }, []);
 
-  const weekStart = getWeekStartDate();
-  const monthStart = getMonthStartDate();
+  const prevWeekRange = useMemo(() => {
+    const now = new Date();
+    const day = now.getDay();
+    const diffToMonday = now.getDate() - day + (day === 0 ? -6 : 1) - 7;
+    const prevMonday = new Date(now.getFullYear(), now.getMonth(), diffToMonday);
+    const prevSunday = new Date(now.getFullYear(), now.getMonth(), diffToMonday + 6);
+    return {
+      start: prevMonday.toISOString().split("T")[0],
+      end: prevSunday.toISOString().split("T")[0]
+    };
+  }, []);
 
-  // Filter call logs based on active tab and search
+  const monthRange = useMemo(() => {
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    return {
+      start: firstDay.toISOString().split("T")[0],
+      end: lastDay.toISOString().split("T")[0]
+    };
+  }, []);
+
+  // Filter call logs based on active dropdown filter and search
   const filteredCalls = useMemo(() => {
     return callLogs.filter((call) => {
       const callDate = call.date || todayStr;
 
-      // Tab filter
-      let matchesTab = true;
+      // Time Dropdown filter
+      let matchesTime = true;
       if (activeFilter === "today") {
-        matchesTab = callDate === todayStr;
-      } else if (activeFilter === "week") {
-        matchesTab = callDate >= weekStart && callDate <= todayStr;
-      } else if (activeFilter === "month") {
-        matchesTab = callDate >= monthStart && callDate <= todayStr;
+        matchesTime = callDate === todayStr;
+      } else if (activeFilter === "yesterday") {
+        matchesTime = callDate === yesterdayStr;
+      } else if (activeFilter === "this_week") {
+        matchesTime = callDate >= weekRange.start && callDate <= weekRange.end;
+      } else if (activeFilter === "prev_week") {
+        matchesTime = callDate >= prevWeekRange.start && callDate <= prevWeekRange.end;
+      } else if (activeFilter === "this_month") {
+        matchesTime = callDate >= monthRange.start && callDate <= monthRange.end;
+      } else if (activeFilter === "all") {
+        matchesTime = true;
       }
 
       // Outcome filter
@@ -98,26 +129,45 @@ export const CallHistoryTracker = () => {
         (call.phone || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
         (call.notes || "").toLowerCase().includes(searchQuery.toLowerCase());
 
-      return matchesTab && matchesOutcome && matchesSearch;
+      return matchesTime && matchesOutcome && matchesSearch;
     });
-  }, [callLogs, activeFilter, outcomeFilter, searchQuery, todayStr, weekStart, monthStart]);
+  }, [
+    callLogs,
+    activeFilter,
+    outcomeFilter,
+    searchQuery,
+    todayStr,
+    yesterdayStr,
+    weekRange,
+    prevWeekRange,
+    monthRange
+  ]);
 
-  // Tab counts
+  // Counts for each filter option
   const counts = useMemo(() => {
     const todayCount = callLogs.filter((c) => (c.date || todayStr) === todayStr).length;
-    const weekCount = callLogs.filter(
-      (c) => (c.date || todayStr) >= weekStart && (c.date || todayStr) <= todayStr
-    ).length;
-    const monthCount = callLogs.filter(
-      (c) => (c.date || todayStr) >= monthStart && (c.date || todayStr) <= todayStr
-    ).length;
+    const yesterdayCount = callLogs.filter((c) => (c.date || todayStr) === yesterdayStr).length;
+    const weekCount = callLogs.filter((c) => {
+      const d = c.date || todayStr;
+      return d >= weekRange.start && d <= weekRange.end;
+    }).length;
+    const prevWeekCount = callLogs.filter((c) => {
+      const d = c.date || todayStr;
+      return d >= prevWeekRange.start && d <= prevWeekRange.end;
+    }).length;
+    const monthCount = callLogs.filter((c) => {
+      const d = c.date || todayStr;
+      return d >= monthRange.start && d <= monthRange.end;
+    }).length;
     return {
       today: todayCount,
-      week: weekCount,
-      month: monthCount,
+      yesterday: yesterdayCount,
+      this_week: weekCount,
+      prev_week: prevWeekCount,
+      this_month: monthCount,
       all: callLogs.length
     };
-  }, [callLogs, todayStr, weekStart, monthStart]);
+  }, [callLogs, todayStr, yesterdayStr, weekRange, prevWeekRange, monthRange]);
 
   const handleCreateCall = (e) => {
     e.preventDefault();
@@ -186,116 +236,61 @@ export const CallHistoryTracker = () => {
         </Button>
       </div>
 
-      {/* Filter Tabs matching User Request: Today Call, This Week, This Month, All */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        {/* Tab Buttons */}
-        <div className="flex items-center gap-1.5 p-1 bg-slate-100/80 rounded-2xl border border-slate-200/60 overflow-x-auto">
-          <button
-            onClick={() => setActiveFilter("today")}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
-              activeFilter === "today"
-                ? "bg-white text-blue-600 shadow-xs border border-slate-200/60"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <span>Today's Calls</span>
-            <span
-              className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${
-                activeFilter === "today"
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-200 text-slate-600"
-              }`}
+      {/* Filter Controls: Time Period Dropdown, Search Input, and Outcome Filter */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/70 p-3 rounded-2xl border border-slate-200/70">
+        {/* Left Side: Time Period Dropdown */}
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          <div className="relative w-full sm:w-64">
+            <Calendar className="w-4 h-4 text-blue-600 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <select
+              value={activeFilter}
+              onChange={(e) => setActiveFilter(e.target.value)}
+              className="w-full pl-10 pr-9 py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer appearance-none shadow-2xs transition-all"
             >
-              {counts.today}
-            </span>
-          </button>
+              <option value="today">Today's Calls ({counts.today})</option>
+              <option value="yesterday">Yesterday's Calls ({counts.yesterday})</option>
+              <option value="this_week">This Week ({counts.this_week})</option>
+              <option value="prev_week">Previous Week ({counts.prev_week})</option>
+              <option value="this_month">This Month ({counts.this_month})</option>
+              <option value="all">All Calls ({counts.all})</option>
+            </select>
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
 
-          <button
-            onClick={() => setActiveFilter("week")}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
-              activeFilter === "week"
-                ? "bg-white text-blue-600 shadow-xs border border-slate-200/60"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <span>This Week</span>
-            <span
-              className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${
-                activeFilter === "week"
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-200 text-slate-600"
-              }`}
-            >
-              {counts.week}
-            </span>
-          </button>
-
-          <button
-            onClick={() => setActiveFilter("month")}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
-              activeFilter === "month"
-                ? "bg-white text-blue-600 shadow-xs border border-slate-200/60"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <span>This Month</span>
-            <span
-              className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${
-                activeFilter === "month"
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-200 text-slate-600"
-              }`}
-            >
-              {counts.month}
-            </span>
-          </button>
-
-          <button
-            onClick={() => setActiveFilter("all")}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
-              activeFilter === "all"
-                ? "bg-white text-blue-600 shadow-xs border border-slate-200/60"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <span>All Calls</span>
-            <span
-              className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${
-                activeFilter === "all"
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-200 text-slate-600"
-              }`}
-            >
-              {counts.all}
-            </span>
-          </button>
+          <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold shrink-0 border border-blue-100">
+            <span>{filteredCalls.length}</span>
+            <span className="text-blue-500 font-normal">showing</span>
+          </span>
         </div>
 
-        {/* Search & Outcome Filter */}
-        <div className="flex items-center gap-3">
+        {/* Right Side: Search & Outcome Filter */}
+        <div className="flex items-center gap-2.5 w-full md:w-auto">
           <div className="relative flex-1 sm:w-56">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               placeholder="Search company, HR..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-2xs"
             />
           </div>
 
-          <select
-            value={outcomeFilter}
-            onChange={(e) => setOutcomeFilter(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
-          >
-            <option value="All">All Outcomes</option>
-            <option value="Connected">Connected</option>
-            <option value="Interested">Interested</option>
-            <option value="Deal Closed">Deal Closed</option>
-            <option value="Busy / No Answer">Busy / No Answer</option>
-            <option value="Voicemail / Message">Voicemail</option>
-          </select>
+          <div className="relative">
+            <select
+              value={outcomeFilter}
+              onChange={(e) => setOutcomeFilter(e.target.value)}
+              className="pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer appearance-none shadow-2xs"
+            >
+              <option value="All">All Outcomes</option>
+              <option value="Connected">Connected</option>
+              <option value="Interested">Interested</option>
+              <option value="Deal Closed">Deal Closed</option>
+              <option value="Busy / No Answer">Busy / No Answer</option>
+              <option value="Voicemail / Message">Voicemail</option>
+            </select>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
         </div>
       </div>
 

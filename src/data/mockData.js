@@ -596,7 +596,7 @@ export const initialCallLogs = [
     contactPerson: "Pooja Mehta (HR Director)",
     phone: "+91 97788 33445",
     caller: "Rahul Sharma",
-    date: getRelativeDate(1), // Yesterday (This Week)
+    date: getRelativeDate(1), // Yesterday
     time: "03:30 PM",
     duration: "18 mins",
     outcome: "Deal Closed",
@@ -609,8 +609,8 @@ export const initialCallLogs = [
     contactPerson: "Vikram Rao (Recruitment Lead)",
     phone: "+91 98333 77112",
     caller: "Rahul Sharma",
-    date: getRelativeDate(2), // 2 days ago (This Week)
-    time: "11:00 AM",
+    date: getRelativeDate(1), // Yesterday
+    time: "05:15 PM",
     duration: "9 mins",
     outcome: "Connected",
     status: "Completed",
@@ -622,7 +622,7 @@ export const initialCallLogs = [
     contactPerson: "Arjun Nair (HR Manager)",
     phone: "+91 96111 88990",
     caller: "Rahul Sharma",
-    date: getRelativeDate(3), // 3 days ago (This Week)
+    date: getRelativeDate(3), // This Week
     time: "04:45 PM",
     duration: "4 mins",
     outcome: "Voicemail / Message",
@@ -635,7 +635,7 @@ export const initialCallLogs = [
     contactPerson: "Karan Malhotra (HR VP)",
     phone: "+91 98990 12345",
     caller: "Rahul Sharma",
-    date: getRelativeDate(5), // 5 days ago (This Week)
+    date: getRelativeDate(4), // This Week
     time: "01:20 PM",
     duration: "15 mins",
     outcome: "Interested",
@@ -648,12 +648,38 @@ export const initialCallLogs = [
     contactPerson: "Sneha Kapoor (People & Culture)",
     phone: "+91 97177 66554",
     caller: "Rahul Sharma",
-    date: getRelativeDate(8), // 8 days ago (Earlier this month)
+    date: getRelativeDate(8), // Previous Week
     time: "12:10 PM",
     duration: "10 mins",
     outcome: "Connected",
     status: "Completed",
     notes: "Introductory discovery call. Requirement gathering for hiring pipeline automation."
+  },
+  {
+    id: "CALL-109",
+    company: "Zenith Tech Labs",
+    contactPerson: "Aakash Gupta (Head of Talent)",
+    phone: "+91 98222 33441",
+    caller: "Rahul Sharma",
+    date: getRelativeDate(9), // Previous Week
+    time: "03:40 PM",
+    duration: "14 mins",
+    outcome: "Deal Closed",
+    status: "Completed",
+    notes: "Confirmed 6-month enterprise onboarding bundle. Invoiced successfully."
+  },
+  {
+    id: "CALL-110",
+    company: "Apex Global Dynamics",
+    contactPerson: "Ritika Sen (Operations)",
+    phone: "+91 97333 44552",
+    caller: "Rahul Sharma",
+    date: getRelativeDate(15), // Earlier This Month
+    time: "11:20 AM",
+    duration: "8 mins",
+    outcome: "Interested",
+    status: "Follow-up Required",
+    notes: "Shared feature matrix and client portfolio. Follow up next week."
   }
 ];
 

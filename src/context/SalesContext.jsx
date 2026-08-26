@@ -9,12 +9,18 @@ import {
   initialNotifications,
   initialCallLogs
 } from "../data/mockData";
+import {
+  initialRevenueStats,
+  initialTransactions
+} from "../data/revenueData";
 import { toast } from "react-toastify";
 
 const SalesContext = createContext(null);
 
 export const SalesProvider = ({ children }) => {
   const [companies, setCompanies] = useState(initialCompanies);
+  const [revenueStats, setRevenueStats] = useState(initialRevenueStats);
+  const [transactions, setTransactions] = useState(initialTransactions);
   const [callLogs, setCallLogs] = useState(initialCallLogs);
   const [activities, setActivities] = useState([
     ...mockDaily,
@@ -152,10 +158,16 @@ export const SalesProvider = ({ children }) => {
     setNotifications(prev => prev.map(n => ({ ...n, unread: false })));
   };
 
+  const getTransactionById = (id) => {
+    return transactions.find(t => t.id === id || t.transactionId === id || t.gatewayTransactionId === id);
+  };
+
   return (
     <SalesContext.Provider
       value={{
         companies,
+        revenueStats,
+        transactions,
         callLogs,
         activities,
         reminders,
@@ -168,6 +180,7 @@ export const SalesProvider = ({ children }) => {
         updateCompany,
         deleteCompany,
         getCompanyById,
+        getTransactionById,
         addCallLog,
         deleteCallLog,
         addActivity,
