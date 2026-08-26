@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Users, Lock, Mail, Eye, EyeOff, CheckCircle2, ArrowRight } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff, CheckCircle2, ArrowRight } from "lucide-react";
 import { toast } from "react-toastify";
+import { Logo } from "../components/common/Logo";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -35,11 +36,7 @@ export const Login = () => {
           <div>
             {/* Header Brand */}
             <div className="flex items-center">
-              <img
-                src="/Logo.jpg"
-                alt="Technokrate Hire"
-                className="h-16 sm:h-20 w-auto object-contain drop-shadow-xs"
-              />
+              <Logo size="lg" />
             </div>
 
             <div className="mt-8">

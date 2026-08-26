@@ -8,11 +8,11 @@ import {
   User,
   LogOut,
   X,
-  Users,
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
 import { useSales } from "../../context/SalesContext";
+import { Logo } from "../common/Logo";
 
 export const Sidebar = ({ isOpen, onClose, isCollapsed, toggleCollapse }) => {
   const navigate = useNavigate();
@@ -44,30 +44,18 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, toggleCollapse }) => {
       <aside
         className={`fixed top-0 left-0 z-50 h-screen bg-white text-slate-700 flex flex-col transition-all duration-300 ease-in-out border-r border-slate-200/90 shadow-sm ${
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        } ${isCollapsed ? "w-20" : "w-64"}`}
+        } ${isCollapsed ? "w-20" : "w-72"}`}
       >
-        {/* Brand Header with Logo.jpg */}
-        <div className="flex items-center justify-between h-20 px-3.5 border-b border-slate-100 bg-white">
-          <div className="flex items-center gap-3 overflow-hidden">
-            {isCollapsed ? (
-              <img
-                src="/image.png"
-                alt="Technokrate Hire"
-                className="w-11 h-11 object-contain mx-auto"
-              />
-            ) : (
-              <img
-                src="/Logo.jpg"
-                alt="Technokrate Hire"
-                className="h-12 w-auto max-w-[185px] object-contain"
-              />
-            )}
-          </div>
+        {/* Brand Header with large crisp Logo */}
+        <div className="flex items-center justify-between h-24 px-4 border-b border-slate-100 bg-white">
+          <NavLink to="/dashboard" className="flex items-center cursor-pointer hover:opacity-90 transition-opacity">
+            <Logo isCollapsed={isCollapsed} size="md" />
+          </NavLink>
 
           {/* Mobile Close Button */}
           <button
             onClick={onClose}
-            className="lg:hidden p-1 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100"
+            className="lg:hidden p-1 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
