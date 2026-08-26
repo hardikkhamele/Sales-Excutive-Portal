@@ -18,8 +18,8 @@ export const PaymentDetails = () => {
     clientName: "Ram Prasad",
     mobileNumber: "8090909408",
     email: "ram.prasad@example.com",
-    plan: "Premium Plan",
-    planType: "Prime Plan",
+    plan: "Pro Plan",
+    planType: "Pro Monthly",
     amount: 499,
     planCharges: 499,
     gstRate: 0,
@@ -122,7 +122,7 @@ export const PaymentDetails = () => {
             <div className="space-y-3.5 text-xs">
               <div className="flex items-center justify-between">
                 <span className="text-slate-500 font-medium">Plan Details</span>
-                <span className="text-slate-800 font-semibold">{item.planType || item.plan || "Prime Plan"}</span>
+                <span className="text-slate-800 font-semibold">{item.planType || item.plan || "Pro Plan"}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-500 font-medium">Plan Charges</span>
