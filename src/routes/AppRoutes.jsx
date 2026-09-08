@@ -12,6 +12,7 @@ import { Reports } from "../pages/Reports";
 import { Profile } from "../pages/Profile";
 import { RevenueManagement } from "../pages/RevenueManagement";
 import { PaymentDetails } from "../pages/PaymentDetails";
+import { CallHistory } from "../pages/CallHistory";
 
 export const AppRoutes = () => {
   return (
@@ -31,6 +32,7 @@ export const AppRoutes = () => {
         <Route path="/revenue/:id" element={<PaymentDetails />} />
         <Route path="/revenue-management/:id" element={<PaymentDetails />} />
         <Route path="/activities" element={<Activities />} />
+        <Route path="/call-history" element={<CallHistory />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/profile" element={<Profile />} />
       </Route>

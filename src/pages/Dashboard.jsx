@@ -1,150 +1,100 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import {
-  Building2,
-  PhoneCall,
-  UserCheck,
-  Clock,
-  Eye,
-  Edit,
-  Trash2,
-  ArrowRight
-} from "lucide-react";
-import { StatCard } from "../components/common/StatCard";
+import { Home, ChevronRight } from "lucide-react";
+import { SalesOverviewBanner } from "../components/dashboard/SalesOverviewBanner";
+import { TimeframeActivityCards } from "../components/dashboard/TimeframeActivityCards";
+import { RevenuePerformanceCards } from "../components/dashboard/RevenuePerformanceCards";
+import { CallHistorySummaryCard } from "../components/dashboard/CallHistorySummaryCard";
+import { DailyActivitiesSummaryCard } from "../components/dashboard/DailyActivitiesSummaryCard";
+import { RecentEmployersSummaryCard } from "../components/dashboard/RecentEmployersSummaryCard";
 import { OnboardingChart } from "../components/dashboard/OnboardingChart";
 import { OnboardingStatus } from "../components/dashboard/OnboardingStatus";
 import { PerformanceCard } from "../components/dashboard/PerformanceCard";
-import { DailyActivitiesTimeline } from "../components/dashboard/DailyActivitiesTimeline";
 import { FollowUpReminders } from "../components/dashboard/FollowUpReminders";
-import { CallHistoryTracker } from "../components/dashboard/CallHistoryTracker";
-import { DataTable } from "../components/common/DataTable";
-import { Badge } from "../components/common/Badge";
-import { ConfirmDialog } from "../components/common/ConfirmDialog";
 import { useSales } from "../context/SalesContext";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
-  const { companies, deleteCompany, userProfile, callLogs } = useSales();
-  const [deleteId, setDeleteId] = useState(null);
+  const {
+    companies,
+    callLogs,
+    revenueStats
+  } = useSales();
+
+  const [activeDateFilter, setActiveDateFilter] = useState("today");
 
   const todayStr = new Date().toISOString().split("T")[0];
   const todayCallsCount = (callLogs || []).filter(c => (c.date || todayStr) === todayStr).length;
 
-  const recentCompanies = companies.slice(0, 5);
-
-  const columns = [
-    {
-      accessorKey: "name",
-      header: "Company Name",
-      cell: (info) => (
-        <span className="font-bold text-slate-800">{info.getValue()}</span>
-      )
-    },
-    {
-      accessorKey: "contactPerson",
-      header: "Contact Person",
-      cell: (info) => <span className="text-slate-600">{info.getValue()}</span>
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: (info) => <Badge status={info.getValue()} />
-    },
-    {
-      accessorKey: "onboardedOn",
-      header: "Onboarded On",
-      cell: (info) => <span className="text-slate-500 font-medium">{info.getValue()}</span>
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => navigate(`/companies/${row.original.id}`)}
-            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-            title="View Details"
-          >
-            <Eye className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => navigate(`/companies/${row.original.id}/edit`)}
-            className="p-1.5 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
-            title="Edit Company"
-          >
-            <Edit className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setDeleteId(row.original.id)}
-            className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
-            title="Delete Company"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
-      )
-    }
-  ];
+  const pendingCompaniesCount = companies.filter(c => c.status === "Pending" || c.status === "In Progress").length;
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Banner matching Specification 7 */}
-      <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
-        <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10">
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Welcome back, {userProfile.fullName} 👋
-          </h2>
-          <p className="text-sm text-blue-200 mt-2 font-medium">
-            Here's what's happening with your sales activities today.
-          </p>
+    <div className="space-y-8 pb-12">
+      {/* Breadcrumb Navigation Card */}
+      <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+        <Home className="w-3.5 h-3.5 text-blue-600" />
+        <Link to="/dashboard" className="text-blue-600 hover:underline">
+          Dashboard
+        </Link>
+        <span className="text-slate-300">/</span>
+        <span className="text-slate-600">Sales Operations & Employer Onboarding</span>
+      </div>
+
+      {/* 1. Executive Control Banner Card */}
+      <SalesOverviewBanner />
+
+      {/* 2. Timeframe Outreach Activity Filter Cards */}
+      <TimeframeActivityCards
+        todayCalls={todayCallsCount || 3}
+        yesterdayCalls={2}
+        weekCalls={7}
+        monthOnboarded={companies.length || 10}
+        activeFilter={activeDateFilter}
+        onFilterChange={(id) => setActiveDateFilter(id)}
+      />
+
+      {/* 3. Subscription Revenue & Target Tracking Cards */}
+      <RevenuePerformanceCards
+        todayRevenue="₹12,490"
+        monthlyRevenue={`₹${(revenueStats?.totalRevenue || 125203).toLocaleString("en-IN")}`}
+        projectedAnnual="₹15.2 Lakhs"
+        targetAmount="₹2.00 Lakhs"
+        achievedAmount={`₹${(revenueStats?.totalRevenue || 125203).toLocaleString("en-IN")}`}
+        achievedPercent={62.6}
+        remainingAmount="₹74,797"
+        conversionRate="68.2%"
+        industryBenchmark="45%"
+        wonDealsCount={25}
+        wonDealsValue={`₹${(revenueStats?.totalRevenue || 125203).toLocaleString("en-IN")}`}
+        activeLeadsCount={pendingCompaniesCount || 7}
+        totalLeadsCount={companies.length * 4 || 32}
+        outreachSuccessRate="78%"
+      />
+
+      {/* 4. Operational Action Cards: Call History, Daily Activities & Recent Employers */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-bold text-slate-800 tracking-tight">
+              Operational Hub & Workflows
+            </h3>
+            <p className="text-xs text-slate-400 font-medium">
+              Click any card to open and manage full module details
+            </p>
+          </div>
+          <span className="text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-200/60 px-3 py-1 rounded-lg">
+            3 Active Modules
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <CallHistorySummaryCard />
+          <DailyActivitiesSummaryCard />
+          <RecentEmployersSummaryCard />
         </div>
       </div>
 
-      {/* 4 KPI Cards matching Specification 7 & Image 2 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <StatCard
-          title="Total Companies"
-          value={companies.length.toString()}
-          change="+12%"
-          changeType="positive"
-          period="vs last month"
-          icon={Building2}
-          iconBg="bg-blue-50 text-blue-600"
-        />
-        <StatCard
-          title="Today's Calls"
-          value={todayCallsCount.toString()}
-          change="+25%"
-          changeType="positive"
-          period="calls logged today"
-          icon={PhoneCall}
-          iconBg="bg-indigo-50 text-indigo-600"
-        />
-        <StatCard
-          title="Companies Onboarding"
-          value="86"
-          change="+15%"
-          changeType="positive"
-          period="vs last month"
-          icon={UserCheck}
-          iconBg="bg-emerald-50 text-emerald-600"
-        />
-        <StatCard
-          title="Pending Follow-ups"
-          value="42"
-          change="-5%"
-          changeType="negative"
-          period="vs yesterday"
-          icon={Clock}
-          iconBg="bg-amber-50 text-amber-600"
-        />
-      </div>
-
-      {/* SALES CALL HISTORY TRACKER (Today's Calls, This Week, This Month, All) */}
-      <CallHistoryTracker />
-
-      {/* Visual Analytics Row: Area Chart + Donut Chart + Performance Widget */}
+      {/* 5. Visual Onboarding Pipeline & Stage Distribution Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-8">
           <OnboardingChart />
@@ -154,50 +104,15 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      {/* Performance & Timeline Row */}
+      {/* 6. Performance & Priority Follow-ups */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-4">
+        <div className="lg:col-span-6">
           <PerformanceCard />
         </div>
-        <div className="lg:col-span-8">
-          <DailyActivitiesTimeline />
-        </div>
-      </div>
-
-      {/* Bottom Grid: Recent Companies Table & Follow-up Reminders */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-8 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-base font-bold text-slate-800">Recent Companies</h3>
-              <p className="text-xs text-slate-400 font-medium">Latest onboarded organizations</p>
-            </div>
-            <Link
-              to="/companies"
-              className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 hover:underline"
-            >
-              View all companies <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-          <DataTable data={recentCompanies} columns={columns} pageSize={5} />
-        </div>
-
-        <div className="lg:col-span-4">
+        <div className="lg:col-span-6">
           <FollowUpReminders />
         </div>
       </div>
-
-      {/* Delete Confirmation Dialog */}
-      <ConfirmDialog
-        isOpen={!!deleteId}
-        onClose={() => setDeleteId(null)}
-        onConfirm={() => {
-          deleteCompany(deleteId);
-          setDeleteId(null);
-        }}
-        title="Delete Company"
-        message="Are you sure you want to delete this company? All associated activity logs will be removed."
-      />
     </div>
   );
 };

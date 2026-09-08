@@ -61,6 +61,9 @@ export const Header = ({ onOpenSidebar }) => {
     if (path === "/activities") {
       return { title: "My Activities", subtitle: "Track your discussions, follow-ups and tasks" };
     }
+    if (path === "/call-history") {
+      return { title: "Sales Call History", subtitle: "Track recruiter outreach, outcomes and notes" };
+    }
     if (path === "/reports") {
       return { title: "Reports", subtitle: "Analyze your performance and activities" };
     }
