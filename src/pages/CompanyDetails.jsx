@@ -12,7 +12,8 @@ import {
   MapPin,
   FileText,
   User,
-  Activity
+  Activity,
+  Plus
 } from "lucide-react";
 import { Badge } from "../components/common/Badge";
 import { Button } from "../components/common/Button";
@@ -74,6 +75,16 @@ export const CompanyDetails = () => {
             </p>
           </div>
         </div>
+
+        <Button
+          variant="primary"
+          size="sm"
+          icon={Plus}
+          onClick={() => navigate(`/companies/${company.id}`)}
+          className="whitespace-nowrap"
+        >
+          Add Requirement
+        </Button>
       </div>
 
       {/* Info & Progress Layout */}
@@ -87,32 +98,51 @@ export const CompanyDetails = () => {
               Company Details
             </h3>
 
-            {/* Company Info Grid */}
+            {/* Requirement Info Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
               <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Industry</span>
-                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.industry}</span>
+                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Posted On</span>
+                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.postedOn || company.onboardedOn || "N/A"}</span>
               </div>
               <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Company Phone</span>
-                <span className="font-bold text-slate-800 text-sm mt-0.5 block flex items-center gap-1.5">
-                  <Phone className="w-3.5 h-3.5 text-slate-400" />
-                  {company.companyPhone || company.phone || "N/A"}
-                </span>
+                <span className="font-semibold text-slate-400 uppercase tracking-wider block">State</span>
+                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.state || "N/A"}</span>
               </div>
               <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Company Email</span>
-                <span className="font-bold text-blue-600 text-sm mt-0.5 block flex items-center gap-1.5">
-                  <Mail className="w-3.5 h-3.5 text-blue-500" />
-                  {company.companyEmail || company.email || "N/A"}
-                </span>
+                <span className="font-semibold text-slate-400 uppercase tracking-wider block">City</span>
+                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.city || "N/A"}</span>
               </div>
               <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Website</span>
-                <span className="font-bold text-blue-600 text-sm mt-0.5 block flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5 text-blue-500" />
-                  {company.website || "N/A"}
-                </span>
+                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Category (IT / Non IT)</span>
+                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.category || "N/A"}</span>
+              </div>
+              <div>
+                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Technology</span>
+                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.technology || "N/A"}</span>
+              </div>
+              <div>
+                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Required Candidates</span>
+                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.requiredCandidates || "N/A"}</span>
+              </div>
+              <div>
+                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Experience</span>
+                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.experience || "N/A"}</span>
+              </div>
+              <div>
+                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Budget</span>
+                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.budget || "N/A"}</span>
+              </div>
+              <div>
+                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Work Mode</span>
+                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.workMode || "N/A"}</span>
+              </div>
+              <div>
+                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Notice Period</span>
+                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.noticePeriod || "N/A"}</span>
+              </div>
+              <div>
+                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Deadline</span>
+                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.deadline || "N/A"}</span>
               </div>
             </div>
 
