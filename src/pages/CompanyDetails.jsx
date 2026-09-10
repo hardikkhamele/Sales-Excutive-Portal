@@ -1,30 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Edit,
   Building2,
-  CheckCircle2,
-  Clock,
-  Phone,
-  Mail,
-  Globe,
-  MapPin,
-  FileText,
-  User,
-  Activity,
   Plus
 } from "lucide-react";
 import { Badge } from "../components/common/Badge";
 import { Button } from "../components/common/Button";
+import { Modal } from "../components/common/Modal";
 import { useSales } from "../context/SalesContext";
 
 export const CompanyDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getCompanyById } = useSales();
-
+  const { getCompanyById, updateCompany } = useSales();
   const company = getCompanyById(id);
+
+  const [isRequirementModalOpen, setIsRequirementModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    postedOn: "",
+    state: "",
+    city: "",
+    category: "",
+    technology: "",
+    requiredCandidates: "",
+    experience: "",
+    budget: "",
+    workMode: "",
+    noticePeriod: "",
+    deadline: ""
+  });
 
   if (!company) {
     return (
@@ -38,9 +44,44 @@ export const CompanyDetails = () => {
     );
   }
 
+  const detailRows = [
+    { label: "Posted On", value: company.postedOn || company.onboardedOn || "" },
+    { label: "State", value: company.state || "" },
+    { label: "City", value: company.city || "" },
+    { label: "Category (IT / Non IT)", value: company.category || "" },
+    { label: "Technology", value: company.technology || "" },
+    { label: "Required Candidates", value: company.requiredCandidates || "" },
+    { label: "Experience", value: company.experience || "" },
+    { label: "Budget", value: company.budget || "" },
+    { label: "Work Mode", value: company.workMode || "" },
+    { label: "Notice Period", value: company.noticePeriod || "" },
+    { label: "Deadline", value: company.deadline || "" }
+  ];
+
+  const handleRequirementSubmit = (event) => {
+    event.preventDefault();
+
+    updateCompany(company.id, {
+      postedOn: formData.postedOn,
+      state: formData.state,
+      city: formData.city,
+      category: formData.category,
+      technology: formData.technology,
+      requiredCandidates: formData.requiredCandidates,
+      experience: formData.experience,
+      budget: formData.budget,
+      workMode: formData.workMode,
+      noticePeriod: formData.noticePeriod,
+      deadline: formData.deadline
+    });
+
+    setIsRequirementModalOpen(false);
+  };
+
+  const rowsForRender = detailRows;
+
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      {/* Navigation Top Bar */}
       <div className="flex items-center justify-between">
         <button
           onClick={() => navigate("/companies")}
@@ -59,7 +100,6 @@ export const CompanyDetails = () => {
         </Button>
       </div>
 
-      {/* Main Header Banner matching Image #5 */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div className="flex items-center gap-5">
           <div className="w-16 h-16 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-2xl shadow-lg shadow-blue-500/20 shrink-0">
@@ -80,175 +120,109 @@ export const CompanyDetails = () => {
           variant="primary"
           size="sm"
           icon={Plus}
-          onClick={() => navigate(`/companies/${company.id}`)}
+          onClick={() => setIsRequirementModalOpen(true)}
           className="whitespace-nowrap"
         >
           Add Requirement
         </Button>
       </div>
 
-      {/* Info & Progress Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* Left Column: Company Info */}
-        <div className="lg:col-span-7 space-y-6">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-sm space-y-6">
-            <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-blue-600" />
-              Company Details
-            </h3>
-
-            {/* Requirement Info Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
-              <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Posted On</span>
-                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.postedOn || company.onboardedOn || "N/A"}</span>
-              </div>
-              <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">State</span>
-                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.state || "N/A"}</span>
-              </div>
-              <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">City</span>
-                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.city || "N/A"}</span>
-              </div>
-              <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Category (IT / Non IT)</span>
-                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.category || "N/A"}</span>
-              </div>
-              <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Technology</span>
-                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.technology || "N/A"}</span>
-              </div>
-              <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Required Candidates</span>
-                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.requiredCandidates || "N/A"}</span>
-              </div>
-              <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Experience</span>
-                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.experience || "N/A"}</span>
-              </div>
-              <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Budget</span>
-                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.budget || "N/A"}</span>
-              </div>
-              <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Work Mode</span>
-                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.workMode || "N/A"}</span>
-              </div>
-              <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Notice Period</span>
-                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.noticePeriod || "N/A"}</span>
-              </div>
-              <div>
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block">Deadline</span>
-                <span className="font-bold text-slate-800 text-sm mt-0.5 block">{company.deadline || "N/A"}</span>
-              </div>
-            </div>
-
-            {/* HR / Contact Person Section */}
-            <div className="pt-4 border-t border-slate-100 space-y-3">
-              <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-emerald-600" />
-                Contact Person / HR Details
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50/80 p-3.5 rounded-2xl border border-slate-100 text-xs">
-                <div>
-                  <span className="font-semibold text-slate-400 uppercase tracking-wider block text-[10px]">Name</span>
-                  <span className="font-bold text-slate-800 text-xs mt-0.5 block">{company.contactPerson}</span>
-                </div>
-                <div>
-                  <span className="font-semibold text-slate-400 uppercase tracking-wider block text-[10px]">HR Mobile</span>
-                  <span className="font-bold text-slate-800 text-xs mt-0.5 block flex items-center gap-1">
-                    <Phone className="w-3 h-3 text-slate-400" />
-                    {company.contactPhone || company.phone || "N/A"}
-                  </span>
-                </div>
-                <div>
-                  <span className="font-semibold text-slate-400 uppercase tracking-wider block text-[10px]">HR Email</span>
-                  <span className="font-bold text-blue-600 text-xs mt-0.5 block flex items-center gap-1 truncate">
-                    <Mail className="w-3 h-3 text-blue-500 shrink-0" />
-                    <span className="truncate">{company.contactEmail || company.email || "N/A"}</span>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-slate-100 text-xs">
-              <span className="font-semibold text-slate-400 uppercase tracking-wider block mb-1">Address</span>
-              <p className="text-slate-700 font-medium leading-relaxed flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                {company.address}
-              </p>
-            </div>
-
-            {company.notes && (
-              <div className="pt-4 border-t border-slate-100 text-xs">
-                <span className="font-semibold text-slate-400 uppercase tracking-wider block mb-1">Notes</span>
-                <p className="text-slate-600 font-medium bg-slate-50 p-3 rounded-xl border border-slate-200/60 leading-relaxed">
-                  {company.notes}
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Recent Company Activities History */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-sm space-y-4">
-            <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-blue-600" />
-              Recent Activities
-            </h3>
-
-            <div className="space-y-3">
-              {(company.history || []).map((h, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
-                  <span className="text-xs font-semibold text-slate-800">{h.title}</span>
-                  <span className="text-[11px] font-bold text-slate-400 bg-white px-2.5 py-1 rounded-md border border-slate-200">
-                    {h.date}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-sm">
+        <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+          <span className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
+            <Building2 className="w-5 h-5" />
+          </span>
+          <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            Company Details
+          </h2>
         </div>
 
-        {/* Right Column: Onboarding Progress Timeline matching Image #5 */}
-        <div className="lg:col-span-5">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-sm space-y-6">
-            <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">
-              Onboarding Progress
-            </h3>
-
-            <div className="relative pl-6 border-l-2 border-slate-200 space-y-6">
-              {(company.timeline || []).map((step, idx) => (
-                <div key={idx} className="relative flex items-center justify-between">
-                  {/* Circle Indicator */}
-                  <span
-                    className={`absolute -left-[31px] w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-xs ${
-                      step.completed
-                        ? "bg-emerald-500 ring-4 ring-emerald-50"
-                        : "bg-slate-300 ring-4 ring-slate-100"
-                    }`}
-                  >
-                    {step.completed ? <CheckCircle2 className="w-4 h-4" /> : idx + 1}
-                  </span>
-
-                  <div>
-                    <h4 className={`text-xs font-bold ${step.completed ? "text-slate-900" : "text-slate-400"}`}>
-                      {step.step}
-                    </h4>
-                  </div>
-
-                  <span className={`text-[11px] font-semibold ${step.completed ? "text-emerald-600 bg-emerald-50" : "text-slate-400 bg-slate-100"} px-2.5 py-0.5 rounded-md`}>
-                    {step.date}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="overflow-x-auto pt-6">
+          <table className="min-w-full border border-slate-200 rounded-2xl overflow-hidden">
+            <thead className="bg-slate-50">
+              <tr>
+                {rowsForRender.map((row) => (
+                  <th key={row.label} className="px-4 py-3 text-center text-[11px] font-black uppercase text-slate-600 whitespace-nowrap border-b border-slate-200">
+                    {row.label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                {rowsForRender.map((row) => (
+                  <td key={row.label} className="px-4 py-4 text-sm font-semibold text-slate-800 border-b border-slate-100 text-center whitespace-nowrap">
+                    {row.value}
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
         </div>
-
       </div>
+
+      <Modal
+        isOpen={isRequirementModalOpen}
+        onClose={() => setIsRequirementModalOpen(false)}
+        title="Add Requirement"
+        maxWidth="max-w-4xl"
+      >
+        <form onSubmit={handleRequirementSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <label className="space-y-2">
+            <span className="text-xs font-bold uppercase text-slate-600">Posted On</span>
+            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="postedOn" value={formData.postedOn} onChange={(e) => setFormData({ ...formData, postedOn: e.target.value })} />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-bold uppercase text-slate-600">State</span>
+            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="state" value={formData.state} onChange={(e) => setFormData({ ...formData, state: e.target.value })} />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-bold uppercase text-slate-600">City</span>
+            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="city" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-bold uppercase text-slate-600">Category (IT / Non IT)</span>
+            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="category" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-bold uppercase text-slate-600">Technology</span>
+            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="technology" value={formData.technology} onChange={(e) => setFormData({ ...formData, technology: e.target.value })} />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-bold uppercase text-slate-600">Required Candidates</span>
+            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="requiredCandidates" value={formData.requiredCandidates} onChange={(e) => setFormData({ ...formData, requiredCandidates: e.target.value })} />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-bold uppercase text-slate-600">Experience</span>
+            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="experience" value={formData.experience} onChange={(e) => setFormData({ ...formData, experience: e.target.value })} />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-bold uppercase text-slate-600">Budget</span>
+            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="budget" value={formData.budget} onChange={(e) => setFormData({ ...formData, budget: e.target.value })} />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-bold uppercase text-slate-600">Work Mode</span>
+            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="workMode" value={formData.workMode} onChange={(e) => setFormData({ ...formData, workMode: e.target.value })} />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-bold uppercase text-slate-600">Notice Period</span>
+            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="noticePeriod" value={formData.noticePeriod} onChange={(e) => setFormData({ ...formData, noticePeriod: e.target.value })} />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-bold uppercase text-slate-600">Deadline</span>
+            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="deadline" value={formData.deadline} onChange={(e) => setFormData({ ...formData, deadline: e.target.value })} />
+          </label>
+
+          <div className="md:col-span-2 flex justify-end gap-3 pt-4">
+            <Button variant="outline" type="button" onClick={() => setIsRequirementModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="primary" type="submit">
+              Save Requirement
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };
