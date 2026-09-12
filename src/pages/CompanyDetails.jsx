@@ -16,10 +16,36 @@ export const CompanyDetails = () => {
   const navigate = useNavigate();
   const { getCompanyById, updateCompany } = useSales();
   const company = getCompanyById(id);
+  const stateOptions = [
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
+    "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh",
+    "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
+    "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh",
+    "Uttarakhand", "West Bengal", "Jammu and Kashmir", "Ladakh", "Delhi",
+    "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+    "Lakshadweep", "Puducherry"
+  ];
+  const cityOptions = [
+    "Bengaluru", "Chennai", "Hyderabad", "Mumbai", "Delhi", "Pune", "Kolkata",
+    "Ahmedabad", "Jaipur", "Lucknow", "Chandigarh", "Gurugram", "Noida", "Indore",
+    "Bhopal", "Surat", "Visakhapatnam", "Coimbatore", "Patna", "Thiruvananthapuram",
+    "Kochi", "Mysuru", "Nashik", "Vadodara", "Hubballi", "Dehradun", "Raipur",
+    "Amritsar", "Nagpur", "Jodhpur", "Bhubaneswar", "Agra", "Kanpur", "Varanasi"
+  ];
+  const experienceOptions = [
+    "0-1 Years", "1-2 Years", "2-3 Years", "3-4 Years", "4-5 Years", "5-6 Years",
+    "6-7 Years", "7-8 Years", "8-9 Years", "9-10 Years", "10+ Years"
+  ];
+  const workModeOptions = [
+    "Remote", "Onsite", "Hybrid"
+  ];
+  const noticePeriodOptions = [
+    "Immediate", "15 Days", "30 Days", "45 Days", "60 Days", "90 Days"
+  ];
 
   const [isRequirementModalOpen, setIsRequirementModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    postedOn: "",
+    profile: "",
     state: "",
     city: "",
     category: "",
@@ -45,7 +71,7 @@ export const CompanyDetails = () => {
   }
 
   const detailRows = [
-    { label: "Posted On", value: company.postedOn || company.onboardedOn || "" },
+    { label: "Profile", value: company.profile || "" },
     { label: "State", value: company.state || "" },
     { label: "City", value: company.city || "" },
     { label: "Category (IT / Non IT)", value: company.category || "" },
@@ -62,7 +88,7 @@ export const CompanyDetails = () => {
     event.preventDefault();
 
     updateCompany(company.id, {
-      postedOn: formData.postedOn,
+      profile: formData.profile,
       state: formData.state,
       city: formData.city,
       category: formData.category,
@@ -169,20 +195,34 @@ export const CompanyDetails = () => {
       >
         <form onSubmit={handleRequirementSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <label className="space-y-2">
-            <span className="text-xs font-bold uppercase text-slate-600">Posted On</span>
-            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="postedOn" value={formData.postedOn} onChange={(e) => setFormData({ ...formData, postedOn: e.target.value })} />
+            <span className="text-xs font-bold uppercase text-slate-600">Category (IT / Non IT)</span>
+            <select className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="category" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
+              <option value="">Select Category</option>
+              <option value="IT">IT</option>
+              <option value="Non IT">Non IT</option>
+            </select>
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-bold uppercase text-slate-600">Profile</span>
+            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="profile" value={formData.profile} onChange={(e) => setFormData({ ...formData, profile: e.target.value })} />
           </label>
           <label className="space-y-2">
             <span className="text-xs font-bold uppercase text-slate-600">State</span>
-            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="state" value={formData.state} onChange={(e) => setFormData({ ...formData, state: e.target.value })} />
+            <select className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="state" value={formData.state} onChange={(e) => setFormData({ ...formData, state: e.target.value })}>
+              <option value="">Select State</option>
+              {stateOptions.map((state) => (
+                <option key={state} value={state}>{state}</option>
+              ))}
+            </select>
           </label>
           <label className="space-y-2">
             <span className="text-xs font-bold uppercase text-slate-600">City</span>
-            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="city" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} />
-          </label>
-          <label className="space-y-2">
-            <span className="text-xs font-bold uppercase text-slate-600">Category (IT / Non IT)</span>
-            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="category" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} />
+            <select className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="city" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })}>
+              <option value="">Select City</option>
+              {cityOptions.map((city) => (
+                <option key={city} value={city}>{city}</option>
+              ))}
+            </select>
           </label>
           <label className="space-y-2">
             <span className="text-xs font-bold uppercase text-slate-600">Technology</span>
@@ -194,23 +234,38 @@ export const CompanyDetails = () => {
           </label>
           <label className="space-y-2">
             <span className="text-xs font-bold uppercase text-slate-600">Experience</span>
-            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="experience" value={formData.experience} onChange={(e) => setFormData({ ...formData, experience: e.target.value })} />
+            <select className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="experience" value={formData.experience} onChange={(e) => setFormData({ ...formData, experience: e.target.value })}>
+              <option value="">Select Experience</option>
+              {experienceOptions.map((experience) => (
+                <option key={experience} value={experience}>{experience}</option>
+              ))}
+            </select>
           </label>
           <label className="space-y-2">
             <span className="text-xs font-bold uppercase text-slate-600">Budget</span>
-            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="budget" value={formData.budget} onChange={(e) => setFormData({ ...formData, budget: e.target.value })} />
+            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" type="number" min="0" name="budget" value={formData.budget} onChange={(e) => setFormData({ ...formData, budget: e.target.value })} />
           </label>
           <label className="space-y-2">
             <span className="text-xs font-bold uppercase text-slate-600">Work Mode</span>
-            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="workMode" value={formData.workMode} onChange={(e) => setFormData({ ...formData, workMode: e.target.value })} />
+            <select className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="workMode" value={formData.workMode} onChange={(e) => setFormData({ ...formData, workMode: e.target.value })}>
+              <option value="">Select Work Mode</option>
+              {workModeOptions.map((workMode) => (
+                <option key={workMode} value={workMode}>{workMode}</option>
+              ))}
+            </select>
           </label>
           <label className="space-y-2">
             <span className="text-xs font-bold uppercase text-slate-600">Notice Period</span>
-            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="noticePeriod" value={formData.noticePeriod} onChange={(e) => setFormData({ ...formData, noticePeriod: e.target.value })} />
+            <select className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="noticePeriod" value={formData.noticePeriod} onChange={(e) => setFormData({ ...formData, noticePeriod: e.target.value })}>
+              <option value="">Select Notice Period</option>
+              {noticePeriodOptions.map((noticePeriod) => (
+                <option key={noticePeriod} value={noticePeriod}>{noticePeriod}</option>
+              ))}
+            </select>
           </label>
           <label className="space-y-2">
             <span className="text-xs font-bold uppercase text-slate-600">Deadline</span>
-            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="deadline" value={formData.deadline} onChange={(e) => setFormData({ ...formData, deadline: e.target.value })} />
+            <input type="date" className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="deadline" value={formData.deadline} onChange={(e) => setFormData({ ...formData, deadline: e.target.value })} />
           </label>
 
           <div className="md:col-span-2 flex justify-end gap-3 pt-4">
