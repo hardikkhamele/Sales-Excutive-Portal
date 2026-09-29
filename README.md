@@ -1,16 +1,56 @@
-# React + Vite
+# Sales Executive Portal - Job Portal System
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+> **Connected Project Notice:** This repository is connected to our main **Job Portal Super Admin** repository (`Job-Portal-for-Organisation-Super-Admin`).
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 📌 Project Overview & Purpose
 
-## React Compiler
+The **Sales Executive Portal** is a dedicated front-end application tailored specifically for the sales team operating within our enterprise Job Portal Ecosystem. 
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Why We Created This Project
+In an enterprise job portal platform, super administrators manage global governance, organization onboarding, and platform settings. However, sales representatives require a specialized workflow to onboard new employer client companies, manage sales leads, track client communication/call history, follow up on subscription packages, and handle payment status records.
 
-## Expanding the Oxlint configuration
+Creating a separate **Sales Executive Portal** provides key benefits:
+1. **Role-Based Operational Efficiency:** Offers sales representatives a clean, focused dashboard customized for sales activities without cluttering them with administrative super-admin functions.
+2. **Seamless Backend Integration:** Directly interfaces with the **Job Portal Super Admin** infrastructure and backend APIs, ensuring synchronized company onboarding, status tracking, and revenue reporting across the organization.
+3. **Enhanced Security & Access Control:** Restricts access to sensitive global system settings while empowering sales personnel to efficiently manage company pipelines, schedule call follow-ups, and manage payment details.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+---
+
+## 🚀 Key Features
+
+- **Company Management:** Onboard new companies, edit existing client profiles, and view comprehensive company details.
+- **Activity & Lead Tracking:** Monitor ongoing sales activities, interaction stages, and lead conversions.
+- **Call History:** Log and review call history, client notes, and follow-up schedules.
+- **Payment & Package Details:** Track client payments, invoice statuses, and subscription details.
+- **Dynamic Navigation & Breadcrumbs:** Intuitive dashboard UI designed with responsive layouts and context-aware breadcrumbs.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend Framework:** React (Vite)
+- **Styling:** Tailwind CSS / Vanilla CSS
+- **Icons:** Lucide React / React Icons
+- **State & Routing:** React Router DOM
+
+---
+
+## ⚙️ Setup and Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/hardikkhamele/Sales-Excutive-Portal.git
+   cd Sales-Excutive-Portal
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   ```

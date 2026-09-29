@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "../components/common/Button";
 import { ConfirmDialog } from "../components/common/ConfirmDialog";
+import { Breadcrumb } from "../components/common/Breadcrumb";
 import { useSales } from "../context/SalesContext";
 
 const INDUSTRY_OPTIONS = [
@@ -128,17 +129,17 @@ export const EditCompany = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Top Navigation */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() => navigate("/companies")}
-          className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-2xs transition-colors cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back
-        </button>
-      </div>
+    <div className="w-full space-y-3">
+      {/* Top Navigation & Breadcrumb */}
+      <Breadcrumb
+        items={[
+          { label: "Companies", path: "/companies" },
+          { label: company.name, path: `/companies/${company.id}` },
+          { label: "Edit Company" }
+        ]}
+        backPath={`/companies/${company.id}`}
+        className="mb-0"
+      />
 
       {/* Main Form Card */}
       <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-xl">

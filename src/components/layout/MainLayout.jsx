@@ -36,14 +36,16 @@ export const MainLayout = () => {
       {/* Main Content Area */}
       <div
         className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
-          sidebarCollapsed ? "lg:ml-20" : "lg:ml-72"
+          sidebarCollapsed ? "lg:ml-16" : "lg:ml-60"
         }`}
       >
         <Header onOpenSidebar={() => setSidebarOpen(true)} />
-        <main className="flex-1 p-6 md:p-8 max-w-7xl w-full mx-auto animate-in fade-in duration-300">
+        <main className="flex-1 px-4 sm:px-6 pt-3 pb-6 w-full animate-in fade-in duration-300">
           <Outlet />
         </main>
       </div>
     </div>
   );
 };
+
+export default MainLayout;

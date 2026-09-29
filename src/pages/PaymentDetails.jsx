@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, CheckCircle, Printer, FileText } from "lucide-react";
+import { Breadcrumb } from "../components/common/Breadcrumb";
 import { useSales } from "../context/SalesContext";
 import { toast } from "react-toastify";
 
@@ -38,28 +39,25 @@ export const PaymentDetails = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-12">
-      {/* Top Header Bar */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() => navigate("/revenue")}
-          className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors group cursor-pointer"
-        >
-          <div className="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-xs group-hover:border-slate-300 group-hover:bg-slate-50 transition-all">
-            <ArrowLeft className="w-4 h-4 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
-          </div>
-          <h1 className="text-xl font-bold text-slate-900">Payment Details</h1>
-        </button>
-
-        {/* Download Invoice Button */}
-        <button
-          onClick={handleDownloadInvoice}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-sm hover:shadow-md transition-all cursor-pointer"
-        >
-          <Download className="w-4 h-4" />
-          <span>Download Invoice</span>
-        </button>
-      </div>
+    <div className="w-full space-y-3 pb-12">
+      {/* Top Breadcrumb Navigation */}
+      <Breadcrumb
+        items={[
+          { label: "Revenue Management", path: "/revenue" },
+          { label: `Payment Details (${item.id || item.transactionId})` }
+        ]}
+        backPath="/revenue"
+        className="mb-0"
+        rightAction={
+          <button
+            onClick={handleDownloadInvoice}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-2xs hover:shadow-xs transition-all cursor-pointer"
+          >
+            <Download className="w-4 h-4" />
+            <span>Download Invoice</span>
+          </button>
+        }
+      />
 
       {/* Main Details Card matching Image #2 */}
       <div

@@ -5,6 +5,7 @@ import { DataTable } from "../components/common/DataTable";
 import { Badge } from "../components/common/Badge";
 import { Button } from "../components/common/Button";
 import { ConfirmDialog } from "../components/common/ConfirmDialog";
+import { Breadcrumb } from "../components/common/Breadcrumb";
 import { useSales } from "../context/SalesContext";
 
 export const Companies = () => {
@@ -97,7 +98,16 @@ export const Companies = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-3">
+      {/* Top Breadcrumb Navigation */}
+      <Breadcrumb
+        items={[
+          { label: "Companies" }
+        ]}
+        backPath="/dashboard"
+        className="mb-0"
+      />
+
       {/* Top Header Controls matching Image #3 */}
       <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3 w-full sm:w-auto">

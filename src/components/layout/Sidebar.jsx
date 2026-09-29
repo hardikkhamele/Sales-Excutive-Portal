@@ -44,14 +44,17 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, toggleCollapse }) => {
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen bg-white text-slate-700 flex flex-col transition-all duration-300 ease-in-out border-r border-slate-200/90 shadow-sm ${
+        className={`fixed top-0 left-0 z-50 h-screen flex flex-col transition-all duration-300 ease-in-out shadow-lg ${
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        } ${isCollapsed ? "w-20" : "w-72"}`}
+        } ${isCollapsed ? "w-16" : "w-60"}`}
+        style={{
+          background: "linear-gradient(180deg, #d8b4fe 0%, #b87fd9 40%, #9333ea 100%)"
+        }}
       >
-        {/* Brand Header with large crisp Logo */}
-        <div className="flex items-center justify-between h-24 px-4 border-b border-slate-100 bg-white">
+        {/* Brand Header with Logo */}
+        <div className="flex items-center justify-between h-16 px-3 bg-white shadow-xs">
           <NavLink to="/dashboard" className="flex items-center cursor-pointer hover:opacity-90 transition-opacity">
-            <Logo isCollapsed={isCollapsed} size="md" />
+            <Logo isCollapsed={isCollapsed} size="sm" />
           </NavLink>
 
           {/* Mobile Close Button */}
@@ -64,7 +67,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, toggleCollapse }) => {
         </div>
 
         {/* Navigation Items */}
-        <nav className="flex-1 px-3 py-6 space-y-1.5 overflow-y-auto">
+        <nav className="flex-1 px-2.5 py-4 space-y-1.5 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -73,15 +76,15 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, toggleCollapse }) => {
                 to={item.path}
                 onClick={onClose}
                 className={({ isActive }) =>
-                  `flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all group ${
+                  `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${
                     isActive
-                      ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
+                      ? "bg-white text-[#9333ea] shadow-md font-bold"
+                      : "text-white/90 hover:text-white hover:bg-white/10"
                   }`
                 }
                 title={isCollapsed ? item.name : undefined}
               >
-                <Icon className="w-5 h-5 shrink-0 transition-transform group-hover:scale-110" />
+                <Icon className="w-4.5 h-4.5 shrink-0 transition-transform group-hover:scale-110" />
                 {!isCollapsed && <span className="truncate">{item.name}</span>}
               </NavLink>
             );
@@ -89,10 +92,10 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, toggleCollapse }) => {
         </nav>
 
         {/* Collapse Toggle Button for Desktop */}
-        <div className="hidden lg:flex px-3 py-2 border-t border-slate-100">
+        <div className="hidden lg:flex px-2.5 py-1.5 border-t border-white/10">
           <button
             onClick={toggleCollapse}
-            className="flex items-center justify-center w-full py-2 text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100/80 rounded-xl transition-colors gap-2"
+            className="flex items-center justify-center w-full py-1.5 text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-colors gap-1.5"
           >
             {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
             {!isCollapsed && <span>Collapse Sidebar</span>}
@@ -100,17 +103,19 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, toggleCollapse }) => {
         </div>
 
         {/* Logout Button */}
-        <div className="p-3 border-t border-slate-100 bg-slate-50/50">
+        <div className="p-2.5 border-t border-white/10">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3.5 w-full px-3.5 py-3 rounded-xl text-sm font-medium text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-all cursor-pointer"
+            className="flex items-center justify-center gap-2 w-full px-3 py-2.5 rounded-xl text-sm font-bold bg-white text-[#9333ea] shadow-md hover:bg-slate-50 transition-all cursor-pointer"
             title={isCollapsed ? "Logout" : undefined}
           >
-            <LogOut className="w-5 h-5 shrink-0" />
-            {!isCollapsed && <span>Logout</span>}
+            <LogOut className="w-4.5 h-4.5 shrink-0" />
+            {!isCollapsed && <span>Log out</span>}
           </button>
         </div>
       </aside>
     </>
   );
 };
+
+export default Sidebar;

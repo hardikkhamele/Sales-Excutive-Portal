@@ -4,12 +4,15 @@ import {
   ArrowLeft,
   Edit,
   Building2,
-  Plus
+  Plus,
+  Trash2
 } from "lucide-react";
 import { Badge } from "../components/common/Badge";
 import { Button } from "../components/common/Button";
 import { Modal } from "../components/common/Modal";
+import { Breadcrumb } from "../components/common/Breadcrumb";
 import { useSales } from "../context/SalesContext";
+import { toast } from "react-toastify";
 
 export const CompanyDetails = () => {
   const { id } = useParams();
@@ -43,8 +46,7 @@ export const CompanyDetails = () => {
     "Immediate", "15 Days", "30 Days", "45 Days", "60 Days", "90 Days"
   ];
 
-  const [isRequirementModalOpen, setIsRequirementModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
+  const emptyRequirement = {
     profile: "",
     state: "",
     city: "",
@@ -56,7 +58,10 @@ export const CompanyDetails = () => {
     workMode: "",
     noticePeriod: "",
     deadline: ""
-  });
+  };
+
+  const [isRequirementModalOpen, setIsRequirementModalOpen] = useState(false);
+  const [requirementsList, setRequirementsList] = useState([{ ...emptyRequirement }]);
 
   if (!company) {
     return (
@@ -84,47 +89,53 @@ export const CompanyDetails = () => {
     { label: "Deadline", value: company.deadline || "" }
   ];
 
+  const handleFieldChange = (index, name, value) => {
+    setRequirementsList((prev) => {
+      const next = [...prev];
+      next[index] = { ...next[index], [name]: value };
+      return next;
+    });
+  };
+
+  const handleAddRequirementBlock = () => {
+    setRequirementsList((prev) => [...prev, { ...emptyRequirement }]);
+  };
+
+  const handleRemoveRequirementBlock = (index) => {
+    if (requirementsList.length <= 1) return;
+    setRequirementsList((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleRequirementSubmit = (event) => {
     event.preventDefault();
-
-    updateCompany(company.id, {
-      profile: formData.profile,
-      state: formData.state,
-      city: formData.city,
-      category: formData.category,
-      technology: formData.technology,
-      requiredCandidates: formData.requiredCandidates,
-      experience: formData.experience,
-      budget: formData.budget,
-      workMode: formData.workMode,
-      noticePeriod: formData.noticePeriod,
-      deadline: formData.deadline
-    });
-
+    const latestReq = requirementsList[requirementsList.length - 1] || requirementsList[0];
+    updateCompany(company.id, latestReq);
+    toast.success(`${requirementsList.length} Requirement(s) saved successfully!`);
+    setRequirementsList([{ ...emptyRequirement }]);
     setIsRequirementModalOpen(false);
   };
 
   const rowsForRender = detailRows;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() => navigate("/companies")}
-          className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-2xs transition-colors cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to List
-        </button>
-
-        <Button
-          variant="outline"
-          icon={Edit}
-          onClick={() => navigate(`/companies/${company.id}/edit`)}
-        >
-          Edit Company
-        </Button>
-      </div>
+    <div className="w-full space-y-3">
+      <Breadcrumb
+        items={[
+          { label: "Companies", path: "/companies" },
+          { label: company.name || "Company Details" }
+        ]}
+        backPath="/companies"
+        className="mb-0"
+        rightAction={
+          <Button
+            variant="outline"
+            icon={Edit}
+            onClick={() => navigate(`/companies/${company.id}/edit`)}
+          >
+            Edit Company
+          </Button>
+        }
+      />
 
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div className="flex items-center gap-5">
@@ -190,91 +201,207 @@ export const CompanyDetails = () => {
       <Modal
         isOpen={isRequirementModalOpen}
         onClose={() => setIsRequirementModalOpen(false)}
-        title="Add Requirement"
+        title="Add Requirements"
         maxWidth="max-w-4xl"
       >
-        <form onSubmit={handleRequirementSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <label className="space-y-2">
-            <span className="text-xs font-bold uppercase text-slate-600">Category (IT / Non IT)</span>
-            <select className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="category" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
-              <option value="">Select Category</option>
-              <option value="IT">IT</option>
-              <option value="Non IT">Non IT</option>
-            </select>
-          </label>
-          <label className="space-y-2">
-            <span className="text-xs font-bold uppercase text-slate-600">Profile</span>
-            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="profile" value={formData.profile} onChange={(e) => setFormData({ ...formData, profile: e.target.value })} />
-          </label>
-          <label className="space-y-2">
-            <span className="text-xs font-bold uppercase text-slate-600">State</span>
-            <select className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="state" value={formData.state} onChange={(e) => setFormData({ ...formData, state: e.target.value })}>
-              <option value="">Select State</option>
-              {stateOptions.map((state) => (
-                <option key={state} value={state}>{state}</option>
-              ))}
-            </select>
-          </label>
-          <label className="space-y-2">
-            <span className="text-xs font-bold uppercase text-slate-600">City</span>
-            <select className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="city" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })}>
-              <option value="">Select City</option>
-              {cityOptions.map((city) => (
-                <option key={city} value={city}>{city}</option>
-              ))}
-            </select>
-          </label>
-          <label className="space-y-2">
-            <span className="text-xs font-bold uppercase text-slate-600">Technology</span>
-            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="technology" value={formData.technology} onChange={(e) => setFormData({ ...formData, technology: e.target.value })} />
-          </label>
-          <label className="space-y-2">
-            <span className="text-xs font-bold uppercase text-slate-600">Required Candidates</span>
-            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="requiredCandidates" value={formData.requiredCandidates} onChange={(e) => setFormData({ ...formData, requiredCandidates: e.target.value })} />
-          </label>
-          <label className="space-y-2">
-            <span className="text-xs font-bold uppercase text-slate-600">Experience</span>
-            <select className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="experience" value={formData.experience} onChange={(e) => setFormData({ ...formData, experience: e.target.value })}>
-              <option value="">Select Experience</option>
-              {experienceOptions.map((experience) => (
-                <option key={experience} value={experience}>{experience}</option>
-              ))}
-            </select>
-          </label>
-          <label className="space-y-2">
-            <span className="text-xs font-bold uppercase text-slate-600">Budget</span>
-            <input className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" type="number" min="0" name="budget" value={formData.budget} onChange={(e) => setFormData({ ...formData, budget: e.target.value })} />
-          </label>
-          <label className="space-y-2">
-            <span className="text-xs font-bold uppercase text-slate-600">Work Mode</span>
-            <select className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="workMode" value={formData.workMode} onChange={(e) => setFormData({ ...formData, workMode: e.target.value })}>
-              <option value="">Select Work Mode</option>
-              {workModeOptions.map((workMode) => (
-                <option key={workMode} value={workMode}>{workMode}</option>
-              ))}
-            </select>
-          </label>
-          <label className="space-y-2">
-            <span className="text-xs font-bold uppercase text-slate-600">Notice Period</span>
-            <select className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="noticePeriod" value={formData.noticePeriod} onChange={(e) => setFormData({ ...formData, noticePeriod: e.target.value })}>
-              <option value="">Select Notice Period</option>
-              {noticePeriodOptions.map((noticePeriod) => (
-                <option key={noticePeriod} value={noticePeriod}>{noticePeriod}</option>
-              ))}
-            </select>
-          </label>
-          <label className="space-y-2">
-            <span className="text-xs font-bold uppercase text-slate-600">Deadline</span>
-            <input type="date" className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm" name="deadline" value={formData.deadline} onChange={(e) => setFormData({ ...formData, deadline: e.target.value })} />
-          </label>
+        <form onSubmit={handleRequirementSubmit} className="space-y-6">
+          <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-1">
+            {requirementsList.map((req, index) => (
+              <div
+                key={index}
+                className="bg-slate-50/80 border border-slate-200/80 rounded-2xl p-5 space-y-4"
+              >
+                <div className="flex items-center justify-between pb-3 border-b border-slate-200/60">
+                  <div className="flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-full bg-purple-100 text-purple-700 text-xs font-extrabold flex items-center justify-center">
+                      {index + 1}
+                    </span>
+                    <h4 className="text-sm font-bold text-slate-800">
+                      Requirement #{index + 1}
+                    </h4>
+                  </div>
+                  {requirementsList.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveRequirementBlock(index)}
+                      className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                      title="Remove this requirement"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
 
-          <div className="md:col-span-2 flex justify-end gap-3 pt-4">
-            <Button variant="outline" type="button" onClick={() => setIsRequirementModalOpen(false)}>
-              Cancel
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label className="space-y-1.5">
+                    <span className="text-xs font-bold uppercase text-slate-600">Category (IT / Non IT)</span>
+                    <select
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                      name="category"
+                      value={req.category}
+                      onChange={(e) => handleFieldChange(index, "category", e.target.value)}
+                    >
+                      <option value="">Select Category</option>
+                      <option value="IT">IT</option>
+                      <option value="Non IT">Non IT</option>
+                    </select>
+                  </label>
+
+                  <label className="space-y-1.5">
+                    <span className="text-xs font-bold uppercase text-slate-600">Profile</span>
+                    <input
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                      name="profile"
+                      value={req.profile}
+                      onChange={(e) => handleFieldChange(index, "profile", e.target.value)}
+                      placeholder="e.g. Senior Frontend Developer"
+                    />
+                  </label>
+
+                  <label className="space-y-1.5">
+                    <span className="text-xs font-bold uppercase text-slate-600">State</span>
+                    <select
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                      name="state"
+                      value={req.state}
+                      onChange={(e) => handleFieldChange(index, "state", e.target.value)}
+                    >
+                      <option value="">Select State</option>
+                      {stateOptions.map((state) => (
+                        <option key={state} value={state}>{state}</option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label className="space-y-1.5">
+                    <span className="text-xs font-bold uppercase text-slate-600">City</span>
+                    <select
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                      name="city"
+                      value={req.city}
+                      onChange={(e) => handleFieldChange(index, "city", e.target.value)}
+                    >
+                      <option value="">Select City</option>
+                      {cityOptions.map((city) => (
+                        <option key={city} value={city}>{city}</option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label className="space-y-1.5">
+                    <span className="text-xs font-bold uppercase text-slate-600">Technology</span>
+                    <input
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                      name="technology"
+                      value={req.technology}
+                      onChange={(e) => handleFieldChange(index, "technology", e.target.value)}
+                      placeholder="e.g. React, Node.js"
+                    />
+                  </label>
+
+                  <label className="space-y-1.5">
+                    <span className="text-xs font-bold uppercase text-slate-600">Required Candidates</span>
+                    <input
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                      name="requiredCandidates"
+                      value={req.requiredCandidates}
+                      onChange={(e) => handleFieldChange(index, "requiredCandidates", e.target.value)}
+                      placeholder="e.g. 5"
+                    />
+                  </label>
+
+                  <label className="space-y-1.5">
+                    <span className="text-xs font-bold uppercase text-slate-600">Experience</span>
+                    <select
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                      name="experience"
+                      value={req.experience}
+                      onChange={(e) => handleFieldChange(index, "experience", e.target.value)}
+                    >
+                      <option value="">Select Experience</option>
+                      {experienceOptions.map((experience) => (
+                        <option key={experience} value={experience}>{experience}</option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label className="space-y-1.5">
+                    <span className="text-xs font-bold uppercase text-slate-600">Budget</span>
+                    <input
+                      type="number"
+                      min="0"
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                      name="budget"
+                      value={req.budget}
+                      onChange={(e) => handleFieldChange(index, "budget", e.target.value)}
+                      placeholder="e.g. 800000"
+                    />
+                  </label>
+
+                  <label className="space-y-1.5">
+                    <span className="text-xs font-bold uppercase text-slate-600">Work Mode</span>
+                    <select
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                      name="workMode"
+                      value={req.workMode}
+                      onChange={(e) => handleFieldChange(index, "workMode", e.target.value)}
+                    >
+                      <option value="">Select Work Mode</option>
+                      {workModeOptions.map((workMode) => (
+                        <option key={workMode} value={workMode}>{workMode}</option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label className="space-y-1.5">
+                    <span className="text-xs font-bold uppercase text-slate-600">Notice Period</span>
+                    <select
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                      name="noticePeriod"
+                      value={req.noticePeriod}
+                      onChange={(e) => handleFieldChange(index, "noticePeriod", e.target.value)}
+                    >
+                      <option value="">Select Notice Period</option>
+                      {noticePeriodOptions.map((noticePeriod) => (
+                        <option key={noticePeriod} value={noticePeriod}>{noticePeriod}</option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label className="space-y-1.5 md:col-span-2">
+                    <span className="text-xs font-bold uppercase text-slate-600">Deadline</span>
+                    <input
+                      type="date"
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                      name="deadline"
+                      value={req.deadline}
+                      onChange={(e) => handleFieldChange(index, "deadline", e.target.value)}
+                    />
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-100">
+            <Button
+              variant="outline"
+              type="button"
+              icon={Plus}
+              onClick={handleAddRequirementBlock}
+              className="border-purple-200 text-purple-700 hover:bg-purple-50 cursor-pointer"
+            >
+              Add Another Requirement
             </Button>
-            <Button variant="primary" type="submit">
-              Save Requirement
-            </Button>
+
+            <div className="flex items-center gap-3">
+              <Button variant="outline" type="button" onClick={() => setIsRequirementModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit">
+                Save Requirements
+              </Button>
+            </div>
           </div>
         </form>
       </Modal>
